@@ -5,7 +5,7 @@
 
   <groupId>com.luhuiguo</groupId>
   <artifactId>fastdfs-client</artifactId>
-  <version>1.0-SNAPSHOT</version>
+  <version>0.1.0</version>
   <packaging>jar</packaging>
 
   <name>fastdfs-client</name>
@@ -55,6 +55,7 @@
       <artifactId>slf4j-api</artifactId>
       <version>${slf4j.version}</version>
     </dependency>
+
     <dependency>
       <groupId>org.slf4j</groupId>
       <artifactId>jcl-over-slf4j</artifactId>
@@ -66,11 +67,18 @@
       <artifactId>logback-classic</artifactId>
       <version>${logback.version}</version>
     </dependency>
+
     <!-- Apache Commons -->
     <dependency>
       <groupId>org.apache.commons</groupId>
       <artifactId>commons-lang3</artifactId>
       <version>${commons-lang3.version}</version>
+    </dependency>
+
+    <dependency>
+      <groupId>org.apache.commons</groupId>
+      <artifactId>commons-pool2</artifactId>
+      <version>${commons-pool2.version}</version>
     </dependency>
 
     <dependency>
@@ -91,12 +99,6 @@
       </exclusions>
     </dependency>
 
-    <dependency>
-      <groupId>org.apache.commons</groupId>
-      <artifactId>commons-pool2</artifactId>
-      <version>${commons-pool2.version}</version>
-    </dependency>
-
     <!-- Spring -->
     <dependency>
       <groupId>org.springframework</groupId>
@@ -115,12 +117,12 @@
   </dependencies>
   <distributionManagement>
     <snapshotRepository>
-      <id>luhuiguo</id>
-      <url>http://repo.luhuiguo.com/libs-snapshot-local</url>
+      <id>ossrh</id>
+      <url>https://oss.sonatype.org/content/repositories/snapshots</url>
     </snapshotRepository>
     <repository>
-      <id>luhuiguo</id>
-      <url>http://repo.luhuiguo.com/libs-release-local</url>
+      <id>ossrh</id>
+      <url>https://oss.sonatype.org/service/local/staging/deploy/maven2/</url>
     </repository>
   </distributionManagement>
   <build>
@@ -137,35 +139,21 @@
         </configuration>
       </plugin>
       <plugin>
-        <groupId>org.apache.maven.plugins</groupId>
-        <artifactId>maven-release-plugin</artifactId>
-        <version>2.5.3</version>
+        <groupId>org.sonatype.plugins</groupId>
+        <artifactId>nexus-staging-maven-plugin</artifactId>
+        <version>1.6.8</version>
+        <extensions>true</extensions>
         <configuration>
-          <mavenExecutorId>forked-path</mavenExecutorId>
-          <useReleaseProfile>false</useReleaseProfile>
-          <arguments>-Psonatype-oss-release</arguments>
+          <serverId>ossrh</serverId>
+          <nexusUrl>https://oss.sonatype.org/</nexusUrl>
+          <autoReleaseAfterClose>true</autoReleaseAfterClose>
         </configuration>
       </plugin>
     </plugins>
   </build>
   <profiles>
     <profile>
-      <id>nexus</id>
-      <distributionManagement>
-        <repository>
-          <id>nexus</id>
-          <name>Nexus Release Repository</name>
-          <url>http://nexus.gildata.com/content/repositories/releases</url>
-        </repository>
-        <snapshotRepository>
-          <id>nexus</id>
-          <name>Nexus Snapshot Repository</name>
-          <url>http://nexus.gildata.com/content/repositories/snapshots/</url>
-        </snapshotRepository>
-      </distributionManagement>
-    </profile>
-    <profile>
-      <id>sonatype-oss-release</id>
+      <id>release</id>
       <build>
         <plugins>
           <plugin>
@@ -191,6 +179,9 @@
                 <goals>
                   <goal>jar</goal>
                 </goals>
+                <configuration>
+                  <additionalparam>-Xdoclint:none</additionalparam>
+                </configuration>
               </execution>
             </executions>
           </plugin>
@@ -210,16 +201,6 @@
           </plugin>
         </plugins>
       </build>
-      <distributionManagement>
-        <snapshotRepository>
-          <id>ossrh</id>
-          <url>https://oss.sonatype.org/content/repositories/snapshots</url>
-        </snapshotRepository>
-        <repository>
-          <id>ossrh</id>
-          <url>https://oss.sonatype.org/service/local/staging/deploy/maven2/</url>
-        </repository>
-      </distributionManagement>
     </profile>
   </profiles>
 </project>
