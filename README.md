@@ -37,13 +37,6 @@ Spring Boot-based project
 			<version>0.1.0</version>
 		</dependency>
 ```
-```java
-  @Autowired
-  private FastFileStorageClient storageClient;
-```
-
-
-Config **application.yml**
 
 ```yml
 fdfs:
@@ -54,8 +47,6 @@ fdfs:
     - 10.1.5.86:22122
     
 ```
-
-Inject **FastFileStorageClient**
 
 ```java
   @Autowired
