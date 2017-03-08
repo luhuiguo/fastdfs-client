@@ -23,22 +23,22 @@ public interface Connection {
     /**
      * 连接是否关闭
      * 
-     * @return
+     * @return 是否关闭
      */
     boolean isClosed();
 
     /**
      * 测试连接是否有效
      * 
-     * @return
+     * @return 是否有效
      */
     boolean isValid();
 
     /**
      * 获取输出流
      * 
-     * @return
-     * @throws IOException
+     * @return 输出流
+     * @throws IOException 获取输出流错误
      */
     OutputStream getOutputStream() throws IOException;
 

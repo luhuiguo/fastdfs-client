@@ -11,6 +11,7 @@ import java.util.List;
 import java.util.Set;
 
 import org.apache.commons.io.FilenameUtils;
+import org.apache.commons.io.IOUtils;
 import org.junit.After;
 import org.junit.Before;
 import org.junit.Test;
@@ -18,15 +19,13 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import com.luhuiguo.fastdfs.conn.ConnectionManager;
-import com.luhuiguo.fastdfs.conn.ConnectionPoolConfig;
 import com.luhuiguo.fastdfs.conn.FdfsConnectionPool;
-import com.luhuiguo.fastdfs.conn.PooledConnectionFactory;
 import com.luhuiguo.fastdfs.conn.TrackerConnectionManager;
 import com.luhuiguo.fastdfs.domain.MetaData;
 import com.luhuiguo.fastdfs.domain.StorePath;
 
 public class FastFileStorageClientTest {
-  
+
 
   protected static Logger LOGGER = LoggerFactory.getLogger(FastFileStorageClientTest.class);
 
@@ -43,30 +42,23 @@ public class FastFileStorageClientTest {
     FdfsConnectionPool pool = new FdfsConnectionPool();
     List<String> trackers = new ArrayList<>();
     trackers.add("10.1.5.85:22122");
-    
-    TrackerConnectionManager tcm = new TrackerConnectionManager(pool,trackers);
-    TrackerClient trackerClient = new DefaultTrackerClient(tcm);
-    
-    ConnectionManager cm = new ConnectionManager(pool);
-    FastFileStorageClient  storageClient = new DefaultFastFileStorageClient(trackerClient,cm);
-    
-    LOGGER.debug("##上传文件..##");
-    File file = new File("pom.xml");
-    
-    // Metadata
-    Set<MetaData> metaDataSet = new HashSet<>();
-    metaDataSet.add(new MetaData("Length", String.valueOf(file.length())));
-    metaDataSet.add(new MetaData("FileName", file.getName()));
-    // 上传文件和Metadata
-    StorePath path = storageClient.uploadFile(new FileInputStream(file), file.length(), FilenameUtils.getExtension(file.getName()),
-            metaDataSet);
-    assertNotNull(path);
-    LOGGER.debug("上传文件路径{}", path);
 
-    // 验证获取MataData
-    LOGGER.debug("##获取Metadata##");
-    Set<MetaData> fetchMateData = storageClient.getMetadata(path.getGroup(), path.getPath());
-    assertEquals(fetchMateData, metaDataSet);
+    TrackerConnectionManager tcm = new TrackerConnectionManager(pool, trackers);
+    TrackerClient trackerClient = new DefaultTrackerClient(tcm);
+
+    ConnectionManager cm = new ConnectionManager(pool);
+    FastFileStorageClient storageClient = new DefaultFastFileStorageClient(trackerClient, cm);
+
+    LOGGER.info("Uploading...");
+    
+    File file = new File("pom.xml");
+
+    StorePath path = storageClient.uploadFile(IOUtils.toByteArray(new FileInputStream(file)),
+        FilenameUtils.getExtension(file.getName()));
+    assertNotNull(path);
+    LOGGER.info("Uploaded {}", path);
+
+    LOGGER.debug(" {}", storageClient.downloadFile(path.getGroup(), path.getPath()));
 
     LOGGER.debug("##删除文件..##");
     storageClient.deleteFile(path.getGroup(), path.getPath());

@@ -1,5 +1,6 @@
 package com.luhuiguo.fastdfs.service;
 
+import java.io.ByteArrayInputStream;
 import java.io.InputStream;
 import java.util.Set;
 
@@ -19,68 +20,80 @@ import com.luhuiguo.fastdfs.proto.storage.enums.StorageMetdataSetType;
  * @author luhuiguo
  *
  */
-public class DefaultFastFileStorageClient extends DefaultGenerateStorageClient implements FastFileStorageClient {
+public class DefaultFastFileStorageClient extends DefaultGenerateStorageClient
+    implements FastFileStorageClient {
 
-    public DefaultFastFileStorageClient(TrackerClient trackerClient,
+  public DefaultFastFileStorageClient(TrackerClient trackerClient,
       ConnectionManager connectionManager) {
     super(trackerClient, connectionManager);
   }
 
 
-    /**
-     * 上传文件
-     */
-    @Override
-    public StorePath uploadFile(InputStream inputStream, long fileSize, String fileExtName, Set<MetaData> metaDataSet) {
-        Validate.notNull(inputStream, "上传文件流不能为空");
-        Validate.notBlank(fileExtName, "文件扩展名不能为空");
-        StorageNode client = trackerClient.getStoreStorage();
-        return uploadFileAndMetaData(client, inputStream, fileSize, fileExtName, metaDataSet);
-    }
+  /**
+   * 上传文件
+   */
+  @Override
+  public StorePath uploadFile(InputStream inputStream, long fileSize, String fileExtName,
+      Set<MetaData> metaDataSet) {
+    Validate.notNull(inputStream, "上传文件流不能为空");
+    Validate.notBlank(fileExtName, "文件扩展名不能为空");
+    StorageNode client = trackerClient.getStoreStorage();
+    return uploadFileAndMetaData(client, inputStream, fileSize, fileExtName, metaDataSet);
+  }
 
 
-    /**
-     * 检查是否有MetaData
-     * 
-     * @param metaDataSet
-     * @return
-     */
-    private boolean hasMetaData(Set<MetaData> metaDataSet) {
-        return null != metaDataSet && !metaDataSet.isEmpty();
-    }
+  /**
+   * 检查是否有MetaData
+   * 
+   * @param metaDataSet
+   * @return
+   */
+  private boolean hasMetaData(Set<MetaData> metaDataSet) {
+    return null != metaDataSet && !metaDataSet.isEmpty();
+  }
 
-    /**
-     * 上传文件和元数据
-     * 
-     * @param client
-     * @param inputStream
-     * @param fileSize
-     * @param fileExtName
-     * @param metaDataSet
-     * @return
-     */
-    private StorePath uploadFileAndMetaData(StorageNode client, InputStream inputStream, long fileSize,
-            String fileExtName, Set<MetaData> metaDataSet) {
-        // 上传文件
-        StorageUploadFileCommand command = new StorageUploadFileCommand(client.getStoreIndex(), inputStream,
-                fileExtName, fileSize, false);
-        StorePath path = connectionManager.executeFdfsCmd(client.getInetSocketAddress(), command);
-        // 上传metadata
-        if (hasMetaData(metaDataSet)) {
-            StorageSetMetadataCommand setMDCommand = new StorageSetMetadataCommand(path.getGroup(), path.getPath(),
-                    metaDataSet, StorageMetdataSetType.STORAGE_SET_METADATA_FLAG_OVERWRITE);
-            connectionManager.executeFdfsCmd(client.getInetSocketAddress(), setMDCommand);
-        }
-        return path;
+  /**
+   * 上传文件和元数据
+   * 
+   * @param client
+   * @param inputStream
+   * @param fileSize
+   * @param fileExtName
+   * @param metaDataSet
+   * @return
+   */
+  private StorePath uploadFileAndMetaData(StorageNode client, InputStream inputStream,
+      long fileSize,
+      String fileExtName, Set<MetaData> metaDataSet) {
+    // 上传文件
+    StorageUploadFileCommand command =
+        new StorageUploadFileCommand(client.getStoreIndex(), inputStream,
+            fileExtName, fileSize, false);
+    StorePath path = connectionManager.executeFdfsCmd(client.getInetSocketAddress(), command);
+    // 上传metadata
+    if (hasMetaData(metaDataSet)) {
+      StorageSetMetadataCommand setMDCommand =
+          new StorageSetMetadataCommand(path.getGroup(), path.getPath(),
+              metaDataSet, StorageMetdataSetType.STORAGE_SET_METADATA_FLAG_OVERWRITE);
+      connectionManager.executeFdfsCmd(client.getInetSocketAddress(), setMDCommand);
     }
+    return path;
+  }
 
-    /**
-     * 删除文件
-     */
-    @Override
-    public void deleteFile(String filePath) {
-        StorePath storePath = StorePath.praseFromUrl(filePath);
-        super.deleteFile(storePath.getGroup(), storePath.getPath());
-    }
+  /**
+   * 删除文件
+   */
+  @Override
+  public void deleteFile(String filePath) {
+    StorePath storePath = StorePath.praseFromUrl(filePath);
+    super.deleteFile(storePath.getGroup(), storePath.getPath());
+  }
+
+
+  @Override
+  public StorePath uploadFile(byte[] content, String fileExtName) {
+
+    return uploadFile(new ByteArrayInputStream(content), content.length, fileExtName, null);
+  }
 
 }

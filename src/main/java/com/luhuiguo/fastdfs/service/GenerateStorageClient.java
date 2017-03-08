@@ -16,6 +16,10 @@ import com.luhuiguo.fastdfs.proto.storage.DownloadCallback;
  */
 public interface GenerateStorageClient {
 
+  
+    StorePath uploadFile(String groupName, byte[] content, String fileExtName);
+
+  
     /**
      * 上传文件(文件不可修改)
      * 
@@ -111,4 +115,7 @@ public interface GenerateStorageClient {
      */
     <T> T downloadFile(String groupName, String path, long fileOffset, long fileSize, DownloadCallback<T> callback);
 
+    byte[] downloadFile(String groupName, String path);
+
+    
 }

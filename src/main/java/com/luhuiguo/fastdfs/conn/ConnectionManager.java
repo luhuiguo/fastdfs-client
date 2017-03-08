@@ -19,12 +19,13 @@ import com.luhuiguo.fastdfs.proto.FdfsCommand;
  *
  */
 public class ConnectionManager {
-
-    /** 连接池 */
-    private FdfsConnectionPool pool;
+    
     /** 日志 */
     protected static final Logger LOGGER = LoggerFactory.getLogger(ConnectionManager.class);
 
+    /** 连接池 */
+    private FdfsConnectionPool pool;
+    
     /**
      * 构造函数
      */
@@ -35,7 +36,7 @@ public class ConnectionManager {
     /**
      * 构造函数
      * 
-     * @param pool
+     * @param pool 连接池
      */
     public ConnectionManager(FdfsConnectionPool pool) {
         super();
@@ -45,9 +46,9 @@ public class ConnectionManager {
     /**
      * 获取连接并执行交易
      * 
-     * @param address
-     * @param command
-     * @return
+     * @param address 连接地址
+     * @param command 命令
+     * @return 返回值
      */
     public <T> T executeFdfsCmd(InetSocketAddress address, FdfsCommand<T> command) {
 

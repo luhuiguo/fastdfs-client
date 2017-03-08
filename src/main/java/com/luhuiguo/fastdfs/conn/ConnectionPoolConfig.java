@@ -18,6 +18,7 @@ public class ConnectionPoolConfig extends GenericKeyedObjectPoolConfig {
         setMinEvictableIdleTimeMillis(180000); // 视休眠时间超过了180秒的对象为过期
         setTimeBetweenEvictionRunsMillis(60000); // 每过60秒进行一次后台对象清理的行动
         setNumTestsPerEvictionRun(-1);
+        setJmxEnabled(false);
     }
 
 }

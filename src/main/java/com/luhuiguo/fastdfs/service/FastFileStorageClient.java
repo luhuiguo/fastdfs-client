@@ -14,6 +14,10 @@ import com.luhuiguo.fastdfs.domain.StorePath;
  */
 public interface FastFileStorageClient extends GenerateStorageClient {
 
+
+  
+     StorePath uploadFile(byte[] content, String fileExtName);
+  
     /**
      * 上传一般文件
      * 
