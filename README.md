@@ -4,7 +4,7 @@
 
 拆分成 **fastdfs-client** 和 **fastdfs-spring-boot-starter**
 
-Not Spring Boot-based project
+## Not Spring Boot-based project
 
 
 ```xml
@@ -28,7 +28,7 @@ Not Spring Boot-based project
 ```
 
 
-Spring Boot-based project
+## Spring Boot-based project
 
 ```xml
 		<dependency>
